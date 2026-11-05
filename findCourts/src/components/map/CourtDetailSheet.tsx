@@ -3,6 +3,7 @@ import {
     Animated,
     Linking,
     PanResponder,
+    Platform,
     Pressable,
     StyleSheet,
     Text,
@@ -26,6 +27,22 @@ const SPRING_CONFIG = {
     stiffness: 190,
     overshootClamping: true,
 } as const;
+
+async function openCourtNavigation(latitude: number, longitude: number) {
+    const destination = `${latitude},${longitude}`;
+    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}&dir_action=navigate`;
+    const nativeMapsUrl = Platform.select({
+        android: `geo:0,0?q=${encodeURIComponent(destination)}`,
+        ios: `maps://?daddr=${encodeURIComponent(destination)}&dirflg=d`,
+        default: googleMapsUrl,
+    });
+
+    try {
+        await Linking.openURL(nativeMapsUrl);
+    } catch {
+        await Linking.openURL(googleMapsUrl);
+    }
+}
 
 export default function CourtDetailsSheet({ cluster, onClose }: Props) {
     const { height: screenHeight } = useWindowDimensions();
@@ -107,6 +124,8 @@ export default function CourtDetailsSheet({ cluster, onClose }: Props) {
     }
 
     // Track the sheet position while dragging anywhere on its surface.
+    // The refs below are only read by gesture callbacks, never during render.
+    // eslint-disable-next-line react-hooks/refs
     const panResponder = PanResponder.create({
         onMoveShouldSetPanResponder: (_, gesture) =>
             Math.abs(gesture.dy) > 6
@@ -169,7 +188,7 @@ export default function CourtDetailsSheet({ cluster, onClose }: Props) {
             style={[
                 styles.sheet,
                 {
-                    height: screenHeight,
+                    height: screenHeight - expandedY,
                     paddingBottom: insets.bottom + 20,
                     transform: [{ translateY }],
                     backgroundColor: colors.surface,
@@ -205,40 +224,60 @@ export default function CourtDetailsSheet({ cluster, onClose }: Props) {
                         <Text style={[styles.close, { color: colors.icons }]}>×</Text>
                     </Pressable>
                 </View>
-            </View>
-            <View style={[styles.headerDivider, { backgroundColor: colors.border }]} />
-
-            <View style={styles.content}>
-                <Text style={[styles.label, { color: colors.secondaryText }]}>Sports</Text>
-                <Text style={[styles.value, { color: colors.text }]}>{sports.join(', ')}</Text>
 
                 <Text style={[styles.label, { color: colors.secondaryText }]}>Address</Text>
                 <Text style={[styles.value, { color: colors.text }]}>
                     {firstCourt?.address ?? 'Address unavailable'}
                 </Text>
-                <Text style={[styles.label, { color: colors.secondaryText }]}>
-                    Address data: {' '}
-                    <Text accessibilityRole="link" onPress={() => {
-                        Linking.openURL('https://www.openstreetmap.org/copyright').catch(() => {});
-                    }}>OpenStreetMap contributors</Text>
-                    {' · '}
-                    <Text accessibilityRole="link" onPress={() => {
-                        Linking.openURL('https://www.geoapify.com/').catch(() => {});
-                    }}>Powered by Geoapify</Text>
-                </Text>
-
                 {cluster.courts.length > 1 && (
                     <Text style={[styles.count, { color: colors.secondaryText }]}>
                         {cluster.courts.length} courts at this location
                     </Text>
                 )}
+                <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel="Navigate to court"
+                    onPress={() => {
+                        if (!firstCourt) return;
+                        openCourtNavigation(firstCourt.latitude, firstCourt.longitude).catch(() => {});
+                    }}
+                    style={[styles.navigateButton, { backgroundColor: colors.button }]}
+                >
+                    <Text style={[styles.navigateButtonText, { color: colors.buttonText }]}>Navigate</Text>
+                </Pressable>
+            </View>
+            <View style={[styles.headerDivider, { backgroundColor: colors.border }]} />
 
-                <View style={[styles.fullDetails, { borderTopColor: colors.border }]}>
-                    <Text style={[styles.sectionTitle, { color: colors.text }]}>More information</Text>
-                    <Text style={[styles.placeholderText, { color: colors.secondaryText }]}>
-                        Photos, facilities, reviews and other community details can be added here.
+            <View style={styles.content}>
+                <Text style={[styles.sectionTitle, { color: colors.text }]}>More information</Text>
+                <Text style={[styles.placeholderText, { color: colors.secondaryText }]}>
+                    Photos, facilities, reviews and other community details can be added here.
+                </Text>
+            </View>
+
+            <View style={[styles.attributionFooter, { borderTopColor: colors.border }]}>
+                <Text style={[styles.attributionText, { color: colors.secondaryText }]}>
+                    Address data:{' '}
+                    <Text
+                        style={{ color: colors.primary }}
+                        accessibilityRole="link"
+                        onPress={() => {
+                            Linking.openURL('https://www.openstreetmap.org/copyright').catch(() => {});
+                        }}
+                    >
+                        OpenStreetMap contributors
                     </Text>
-                </View>
+                    {' | '}
+                    <Text
+                        style={{ color: colors.primary }}
+                        accessibilityRole="link"
+                        onPress={() => {
+                            Linking.openURL('https://www.geoapify.com/').catch(() => {});
+                        }}
+                    >
+                        Powered by Geoapify
+                    </Text>
+                </Text>
             </View>
         </Animated.View>
     );
@@ -265,6 +304,7 @@ const styles = StyleSheet.create({
     headerDivider: {
         height: StyleSheet.hairlineWidth,
         marginHorizontal: 20,
+        marginBottom: 14,
     },
     handle: {
         alignSelf: 'center',
@@ -308,12 +348,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     count: {
-        marginTop: 20,
-    },
-    fullDetails: {
-        marginTop: 28,
-        paddingTop: 22,
-        borderTopWidth: StyleSheet.hairlineWidth,
+        marginTop: 12,
     },
     sectionTitle: {
         fontSize: 18,
@@ -324,11 +359,33 @@ const styles = StyleSheet.create({
         fontSize: 15,
         lineHeight: 22,
     },
+    attributionFooter: {
+        marginTop: 'auto',
+        marginHorizontal: 20,
+        paddingTop: 12,
+        borderTopWidth: StyleSheet.hairlineWidth,
+    },
+    attributionText: {
+        fontSize: 12,
+        lineHeight: 17,
+        textAlign: 'center',
+    },
     closeButton: {
         width: 36,
         height: 36,
         borderRadius: 18,
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    navigateButton: {
+        alignSelf: 'flex-start',
+        marginTop: 14,
+        paddingHorizontal: 18,
+        paddingVertical: 10,
+        borderRadius: 8,
+    },
+    navigateButtonText: {
+        fontSize: 15,
+        fontWeight: '600',
     },
 });
