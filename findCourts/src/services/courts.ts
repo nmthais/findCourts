@@ -14,6 +14,9 @@ type GetCourtsResponse = {
         fetchedTiles: number;
         reusedTiles: number;
         addressEnrichmentStarted: number;
+        pendingTiles: number;
+        pendingAddresses: number;
+        discoveryStatus: 'cached' | 'disabled' | 'unconfigured' | 'deferred' | 'failed' | 'fetched';
     };
 };
 

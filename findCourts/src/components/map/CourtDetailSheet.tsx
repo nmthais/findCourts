@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
     Animated,
+    Linking,
     PanResponder,
     Pressable,
     StyleSheet,
@@ -214,6 +215,16 @@ export default function CourtDetailsSheet({ cluster, onClose }: Props) {
                 <Text style={[styles.label, { color: colors.secondaryText }]}>Address</Text>
                 <Text style={[styles.value, { color: colors.text }]}>
                     {firstCourt?.address ?? 'Address unavailable'}
+                </Text>
+                <Text style={[styles.label, { color: colors.secondaryText }]}>
+                    Address data: {' '}
+                    <Text accessibilityRole="link" onPress={() => {
+                        Linking.openURL('https://www.openstreetmap.org/copyright').catch(() => {});
+                    }}>OpenStreetMap contributors</Text>
+                    {' · '}
+                    <Text accessibilityRole="link" onPress={() => {
+                        Linking.openURL('https://www.geoapify.com/').catch(() => {});
+                    }}>Powered by Geoapify</Text>
                 </Text>
 
                 {cluster.courts.length > 1 && (

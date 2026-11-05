@@ -5,3 +5,7 @@ verify_jwt = false
 
 [functions.search-courts]
 verify_jwt = false
+
+# The worker itself requires the server secret key (auth: 'secret').
+[functions.enrich-court-addresses]
+verify_jwt = false

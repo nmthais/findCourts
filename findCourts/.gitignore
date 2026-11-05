@@ -46,3 +46,7 @@ example
 /android
 
 .env
+
+data/osm/*.osm.pbf
+data/osm/*.geojson
+data/osm/*.csv

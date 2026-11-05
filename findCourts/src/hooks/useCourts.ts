@@ -17,7 +17,7 @@ export function useCourts() {
         () => clusterCourts(courts),
         [courts],
     );
-    
+
     useEffect(() => {
         let active = true;
 
@@ -48,8 +48,19 @@ export function useCourts() {
 
         try {
             const result = await getCourts(bounds);
-            setCourts(result.courts);
-            await saveCachedCourts(result.courts);
+            const fallback = result.courts.length === 0 && result.cache.pendingTiles > 0
+                ? await loadCachedCourts()
+                : null;
+            setCourts(fallback?.courts ?? result.courts);
+            if (!fallback) await saveCachedCourts(result.courts);
+            if (result.cache.pendingTiles > 0) {
+                const coverageLimited = result.cache.discoveryStatus === 'disabled'
+                    || result.cache.discoveryStatus === 'unconfigured';
+                const message = coverageLimited
+                    ? 'Court coverage is limited in this area.'
+                    : 'Some courts could not be loaded yet. Try the location button again later.';
+                setCourtsError(fallback ? `${message} Showing saved courts.` : message);
+            }
         } catch (error) {
             const cached = await loadCachedCourts();
             if (cached) {
@@ -77,6 +88,3 @@ export function useCourts() {
         clearCourtsError,
     };
 }
-
-
-    
