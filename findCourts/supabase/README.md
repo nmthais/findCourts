@@ -1,5 +1,7 @@
 # Supabase court data
 
+For Firebase signup and username storage, see [User profiles](PROFILES.md).
+
 ## Deploy
 
 Run these commands from `findCourts` after linking your Supabase project:

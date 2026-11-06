@@ -1,5 +1,9 @@
 project_id = "findCourts"
 
+# This function verifies Firebase JWT signatures, project, and expiry itself.
+[functions.profile]
+verify_jwt = false
+
 [functions.get-courts]
 verify_jwt = false
 

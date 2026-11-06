@@ -176,18 +176,38 @@ export default function Map() {
                 )}
 
             </MapView>
-            <Pressable
-                accessibilityRole="button"
-                accessibilityLabel="Search courts"
-                onPress={() => router.push('/search')}
+            <View
                 style={[styles.searchLauncher, { top: controlsTop , backgroundColor: colors.surface}]}
             >
-                <Ionicons name="search" size={20} color={colors.icons} />
-                
-                <Text style={styles.searchLauncherText}>
-                    {selectedClusterName ?? 'Search name or address'}
-                </Text>
-            </Pressable>
+                <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel="Search courts"
+                    onPress={() => router.push('/search')}
+                    style={styles.searchLauncherButton}
+                >
+                    <Ionicons name="search" size={20} color={colors.icons} />
+                    <Text style={styles.searchLauncherText} numberOfLines={1}>
+                        {selectedClusterName ?? 'Search name or address'}
+                    </Text>
+                </Pressable>
+                {selectedClusterName != null && (
+                    <Pressable
+                        accessibilityRole="button"
+                        accessibilityLabel="Clear search"
+                        onPress={() => setSelectedCluster(null)}
+                        style={styles.clearSearchButton}
+                    >
+                        <Ionicons name="close" size={22} color={colors.icons} />
+                    </Pressable>
+                )}
+                <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel="Account"
+                    onPress={() => router.push('/account')}
+                >
+                    <Ionicons name="person-outline" style={[styles.accountIcon, {borderColor: colors.icons, backgroundColor:colors.border}]} size={22} color={colors.icons} />
+                </Pressable>
+            </View>
 
             {courtsLoading && (
                 <Text style={[styles.info, { top: controlsTop + 58 }]}>Loading courts...</Text>
@@ -355,10 +375,27 @@ const styles = StyleSheet.create({
             height: 2,
         },
     },
+    searchLauncherButton: {
+        flex: 1,
+        minHeight: 48,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    clearSearchButton: {
+        width: 44,
+        minHeight: 48,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     searchLauncherText: {
         flex: 1,
         marginLeft: 10,
         color: '#52606d',
         fontSize: responsiveFontSize(16),
     },
+    accountIcon: {
+        borderWidth: 2, 
+        borderRadius: 22, 
+        padding: 5,
+    }
 });

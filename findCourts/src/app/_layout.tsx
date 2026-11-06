@@ -1,10 +1,16 @@
 import { CourtsProvider } from '@/context/CourtsContext';
+import { AuthProvider } from '@/context/AuthContext';
 import { Stack } from 'expo-router';
+import AppToastProvider from '@/components/AppToastProvider';
 
 export default function RootLayout() {
   return (
-    <CourtsProvider>
-      <Stack />
-    </CourtsProvider>
+    <AppToastProvider>
+      <AuthProvider>
+        <CourtsProvider>
+          <Stack />
+        </CourtsProvider>
+      </AuthProvider>
+    </AppToastProvider>
   );
 }

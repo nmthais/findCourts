@@ -13,6 +13,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { CourtCluster } from '@/type/CourtCluster';
 import { useAppTheme } from '@/theme/appTheme';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 type Props = {
     cluster: CourtCluster | null;
@@ -221,7 +222,7 @@ export default function CourtDetailsSheet({ cluster, onClose }: Props) {
                         onPress={handleClose}
                         style={[styles.closeButton, { backgroundColor: colors.pressed }]}
                     >
-                        <Text style={[styles.close, { color: colors.icons }]}>×</Text>
+                        <Ionicons name="close" size={22} color={colors.icons} />
                     </Pressable>
                 </View>
 
