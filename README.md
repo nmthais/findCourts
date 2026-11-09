@@ -156,6 +156,7 @@ npx supabase functions deploy profile --use-api
 npx supabase functions deploy reviews --use-api
 npx supabase functions deploy cloudinary-signature --use-api
 npx supabase functions deploy court-images --use-api
+npx supabase functions deploy contributions --use-api
 npx supabase functions deploy enrich-court-addresses --use-api
 ```
 
@@ -213,6 +214,21 @@ Recommended device checks:
 5. Confirm logged-out users can view reviews/photos but cannot modify them.
 
 ## Common problems
+
+### My contributions
+
+Account > My contributions shows the signed-in user's currently published
+reviews and photos in separate tabs. It includes court links, review ratings
+and text, upload/review dates, and full-screen photo previews. Pull to refresh;
+use Load more for older entries. Returning to the page refreshes its contents.
+Deleted records and previous review versions are not retained here.
+
+For an existing backend, run `npx supabase db push` and
+`npx supabase functions deploy contributions --use-api` from `findCourts`.
+The function uses the existing `FIREBASE_PROJECT_ID` secret and verifies the
+Firebase token before filtering records by the user's UID. History uses
+20-item cursor pages ordered by creation time and ID. The migration adds
+indexes for these queries; it does not change existing contributions.
 
 ### The app says Supabase is unavailable
 

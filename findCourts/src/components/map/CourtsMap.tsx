@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, View, Text, Pressable } from 'react-native';
 import MapView, { type Region } from 'react-native-maps';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -10,6 +10,7 @@ import { useCourtsContext } from '@/context/CourtsContext';
 import { useAppTheme } from '@/theme/appTheme';
 import { requestForegroundPermissionsAsync, getCurrentPositionAsync } from 'expo-location';
 import CourtDetailsSheet from './CourtDetailSheet';
+import { focusCourtInCluster } from '@/utils/focusCourtInCluster';
 
 const NEARBY_REGION_DELTA = 0.12;
 type LocationStatus =
@@ -65,7 +66,10 @@ export default function Map() {
         selectedCluster && !loadedVersionOfSelectedCluster
             ? [...courtClusters, selectedCluster] : courtClusters; 
 
-    const focusedCluster = loadedVersionOfSelectedCluster ?? selectedCluster;
+    const focusedCluster = useMemo(() => {
+        const cluster = loadedVersionOfSelectedCluster ?? selectedCluster;
+        return cluster ? focusCourtInCluster(cluster, selectedCluster?.selectedCourtId) : null;
+    }, [loadedVersionOfSelectedCluster, selectedCluster]);
 
     useEffect(() => {
         if (!focusedCluster) return;
@@ -259,7 +263,7 @@ export default function Map() {
             </Pressable>
             
             <CourtDetailsSheet
-                key={selectedCluster?.id ?? 'no-court-selected'}
+                key={`${selectedCluster?.id ?? 'no-court-selected'}:${selectedCluster?.selectedCourtId ?? ''}`}
                 cluster={focusedCluster ?? null}
                 onClose={() => setSelectedCluster(null)}
             />

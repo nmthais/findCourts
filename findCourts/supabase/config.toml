@@ -1,5 +1,9 @@
 project_id = "findCourts"
 
+# Contributions verifies the Firebase session and filters by its UID.
+[functions.contributions]
+verify_jwt = false
+
 # This function verifies Firebase JWT signatures, project, and expiry itself.
 [functions.profile]
 verify_jwt = false

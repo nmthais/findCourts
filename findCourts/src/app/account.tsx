@@ -324,6 +324,12 @@ export default function Account() {
                         {error && (
                             <Text accessibilityRole="alert" accessibilityLiveRegion="polite" style={[styles.error, { color: colors.error }]}>{error}</Text>
                         )}
+                        <Pressable accessibilityRole="button" onPress={() => router.push('/contributions')}
+                            disabled={signingOut || savingUsername || savingPassword}
+                            style={[styles.button, { backgroundColor: colors.surface, marginBottom: 24 }]}>
+                            <Ionicons name="time-outline" size={22} color={colors.primary} />
+                            <Text style={[styles.buttonText, { color: colors.primary }]}>My contributions</Text>
+                        </Pressable>
                         <View style={styles.footer}>
                         <Pressable
                             onPress={handleSignOut}
