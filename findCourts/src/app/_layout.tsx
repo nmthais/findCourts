@@ -8,7 +8,9 @@ export default function RootLayout() {
     <AppToastProvider>
       <AuthProvider>
         <CourtsProvider>
-          <Stack />
+          <Stack>
+            <Stack.Screen name="review" options={{ presentation: 'modal', headerShown: false }} />
+          </Stack>
         </CourtsProvider>
       </AuthProvider>
     </AppToastProvider>

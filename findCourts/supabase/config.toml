@@ -4,10 +4,19 @@ project_id = "findCourts"
 [functions.profile]
 verify_jwt = false
 
+[functions.reviews]
+verify_jwt = false
+
 [functions.get-courts]
 verify_jwt = false
 
 [functions.search-courts]
+verify_jwt = false
+
+[functions.cloudinary-signature]
+verify_jwt = false
+
+[functions.court-images]
 verify_jwt = false
 
 # The worker itself requires the server secret key (auth: 'secret').

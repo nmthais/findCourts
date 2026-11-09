@@ -39,7 +39,7 @@ export async function handler(req: Request): Promise<Response> {
         const body = await req.json().catch(() => null);
         const username = typeof body?.username === 'string' ? body.username.trim() : '';
         if (!/^[A-Za-z0-9_]{3,24}$/.test(username)) {
-            return json({ error: 'Use 3–24 letters, numbers, or underscores for your username.' }, 400);
+            return json({ error: 'Use 3-24 letters, numbers, or underscores for your username.' }, 400);
         }
         // Ignore any UID or email supplied by the caller. Identity comes only from the token.
         const { data, error } = await db.from('profiles')

@@ -84,7 +84,7 @@ export default function Account() {
     async function handleSaveUsername() {
         if (!user || savePending.current || signOutPending.current) return;
         if (!validateUsername(username)) {
-            setUsernameError('Use 3–24 letters, numbers, or underscores for your username.');
+            setUsernameError('Use 3-24 letters, numbers, or underscores for your username.');
             return;
         }
         savePending.current = true;

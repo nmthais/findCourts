@@ -39,7 +39,7 @@ async function requestProfile(user: User, username?: string): Promise<Profile | 
 export function getProfile(user: User) { return requestProfile(user); }
 export function saveProfile(user: User, username: string) {
     if (!validateUsername(username)) {
-        throw new ProfileError('Use 3–24 letters, numbers, or underscores for your username.');
+        throw new ProfileError('Use 3-24 letters, numbers, or underscores for your username.');
     }
     return requestProfile(user, username);
 }
