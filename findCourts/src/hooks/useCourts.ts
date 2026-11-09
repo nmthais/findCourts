@@ -68,7 +68,7 @@ export function useCourts() {
             }
 
             const message = error instanceof Error ? error.message : 'Unable to load courts.';
-            setCourtsError(cached ? `${message} Showing saved courts.` : message);
+            setCourtsError(cached ? `${message}. Showing saved courts.` : message);
         } finally {
             setCourtsLoading(false);
         }

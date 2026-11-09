@@ -185,8 +185,8 @@ export default function Account() {
                         <Text style={[styles.title, { color: colors.text }]}>Account settings</Text>
                         <Text style={[styles.subtitle, { color: colors.secondaryText }]}>Your FindCourts account details.</Text>
                         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-                            <Text style={[styles.label, { color: colors.secondaryText }]}>Username</Text>
-                            <View style={styles.settingRow}>
+                            <Text style={[styles.label, styles.usernameLabel, { color: colors.secondaryText }]}>Username</Text>
+                            <View style={[styles.settingRow, styles.usernameRow]}>
                                 <Text style={[styles.value, styles.settingValue, { color: colors.text }]}>
                                     {!currentProfile ? 'Loading...' : currentProfile.error || currentProfile.profile?.username || 'Not set'}
                                 </Text>
@@ -199,7 +199,7 @@ export default function Account() {
                                             setUsername(currentProfile.profile?.username ?? '');
                                             setEditingUsername(true);
                                         }}
-                                        style={({ pressed }) => [styles.iconButton, { backgroundColor: pressed ? colors.pressed : 'transparent' }]}
+                                        style={({ pressed }) => [styles.iconButton, styles.usernameEditButton, { backgroundColor: pressed ? colors.pressed : 'transparent' }]}
                                     >
                                         <Ionicons name="pencil-outline" size={20} color={colors.icons} />
                                     </Pressable>
@@ -254,7 +254,7 @@ export default function Account() {
                             <Text style={[styles.value, { color: colors.text }]}>{memberSince}</Text>
                             <Text style={[styles.label, { color: colors.secondaryText }]}>Password</Text>
                             <View style={styles.settingRow}>
-                                <Text style={[styles.value, styles.settingValue, { color: colors.text }]}>••••••••</Text>
+                                <Text style={[styles.value, styles.settingValue, { color: colors.text }]}>••••••••••••••••</Text>
                                 {!editingPassword && (
                                     <Pressable
                                         accessibilityLabel="Change password"
@@ -361,9 +361,20 @@ const styles = StyleSheet.create({
     flex: 1,
     marginBottom: 0,
   },
+  usernameLabel: {
+    marginBottom: 4,
+  },
+  usernameRow: {
+    paddingRight: 44,
+  },
+  usernameEditButton: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
   iconButton: {
     width: 44,
-    height: 44,
+    height: 24,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',

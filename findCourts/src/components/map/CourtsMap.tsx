@@ -278,16 +278,16 @@ const styles = StyleSheet.create({
         width: '100%', 
         height: '100%' 
     },
-    error: {
-        fontSize: responsiveFontSize(14),
-        position: 'absolute',
-        alignSelf: 'center',
-        backgroundColor: 'white',
-        marginHorizontal: 16,
-        padding: 10,
-        borderRadius: 8,
-        elevation: 3,
-    },
+  error: {
+    fontSize: responsiveFontSize(14),
+    position: 'absolute',
+    left: 16,
+    right: 16,
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 8,
+    elevation: 3,
+  },
     info: {
         fontSize: responsiveFontSize(14),
         position: 'absolute',
