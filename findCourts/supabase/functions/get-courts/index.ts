@@ -37,6 +37,7 @@ function isValidBounds(value: unknown): value is Bounds {
 }
 
 function tilesForBounds(bounds: Bounds): Tile[] {
+    // Exclude the next tile when the north/east edge falls exactly on a tile boundary.
     const south = Math.floor(bounds.south / TILE_SIZE_DEGREES);
     const north = Math.ceil(bounds.north / TILE_SIZE_DEGREES) - 1;
     const west = Math.floor(bounds.west / TILE_SIZE_DEGREES);
@@ -230,6 +231,8 @@ export default {
                 console.warn('OVERPASS_API_KEY is missing; returning stored courts.');
             }
 
+            // Discovery failure still allows stored courts to be returned. Query the original
+            // bounds because fetched tiles may extend beyond the requested area.
             const { data: courts, error } = await db.from('courts')
                 .select('id, name, sport, latitude, longitude, address, address_status')
                 .gte('latitude', bounds.south).lte('latitude', bounds.north)

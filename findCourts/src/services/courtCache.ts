@@ -1,6 +1,7 @@
 import Storage from 'expo-sqlite/kv-store';
 import type { Court } from "@/type/Court";
 
+// One fallback batch across all areas, with no expiry; this is not a cache keyed by map bounds.
 const LAST_COURTS_KEY = 'courts:last-successful-batch';
 
 type CachedCourtBatch = {

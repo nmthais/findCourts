@@ -132,6 +132,7 @@ export async function handler(req: Request): Promise<Response> {
                     error: 'This image does not belong to this court and user.',
                 }, 403);
             }
+            // Read canonical asset metadata from Cloudinary instead of accepting a client URL.
             const resourceUrl = [
                 `https://api.cloudinary.com/v1_1/${cloudName}`,
                 'resources/image/upload',
@@ -253,6 +254,7 @@ export async function handler(req: Request): Promise<Response> {
             const deletion = await cloudinaryResponse.json();
             const cloudinaryStatus = deletion.deleted?.[image.cloudinary_public_id];
 
+            // A retry can find the asset already gone if the earlier database delete failed.
             if (
                 cloudinaryStatus !== 'deleted'
                 && cloudinaryStatus !== 'not_found'

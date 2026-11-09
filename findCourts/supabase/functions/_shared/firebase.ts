@@ -5,6 +5,7 @@ const firebaseKeys = createRemoteJWKSet(new URL(
 ));
 
 export async function verifyFirebaseIdentity(token: string, project: string, keys: JWTVerifyGetKey = firebaseKeys) {
+    // A valid Google signature alone is insufficient: the token must target our Firebase project.
     const { payload } = await jwtVerify(token, keys, {
         algorithms: ['RS256'],
         issuer: `https://securetoken.google.com/${project}`,

@@ -15,6 +15,7 @@ export function useCourtSearch(localClusters: CourtCluster[]) {
     const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
     
     const cancelPendingSearch = useCallback(() => {
+        // Invalidate responses already in flight as well as cancelling the debounce timer.
         searchRequestId.current += 1;
 
         if (searchTimeout.current) {
@@ -58,7 +59,7 @@ export function useCourtSearch(localClusters: CourtCluster[]) {
 
             const normalizedQuery = value.trim();
 
-            // if query == 0 submit is not allowed
+            // Clearing the query also clears suggestions from the previous search.
             if (!normalizedQuery) {
                 setSuggestions([]);
                 setSuggestionsLoading(false);
@@ -68,7 +69,7 @@ export function useCourtSearch(localClusters: CourtCluster[]) {
 
             const localSuggestions = localSuggestionsForQuery(normalizedQuery);
 
-            // use alr loaded suggestions or local suggestion for 1 character bcs we want to be responsive
+            // Single-character queries stay local; the remote search requires at least two.
             if (normalizedQuery.length === 1 || !isSupabaseConfigured) {
                 setSuggestions(localSuggestions);
                 setSuggestionsLoading(false);
@@ -81,6 +82,7 @@ export function useCourtSearch(localClusters: CourtCluster[]) {
             setShowSuggestions(true);
 
             searchTimeout.current = setTimeout(() => {
+                // Only the latest query may replace suggestions or clear its loading state.
                 searchCourts(normalizedQuery)
                     .then((results) => {
                         if (requestId === searchRequestId.current) setSuggestions(clusterCourts(results));

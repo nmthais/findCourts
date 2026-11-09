@@ -3,7 +3,7 @@ import type { CourtCluster } from "@/type/CourtCluster";
 
 const CLUSTER_DISTANCE_METRES = 80;
 const EARTH_APPROX_RADIUS_METRES = 6371000;
-// Haversine formula to calculate the approximate real-world distance between two coordinates, copied from fetch courts
+// Haversine distance keeps the clustering threshold in metres rather than map degrees.
 export function distanceInMetres(a: Court, b: Court) {
     const radians = (degrees: number) => degrees * Math.PI / 180;
     const latitudeDelta = radians(b.latitude - a.latitude);
@@ -16,9 +16,10 @@ export function distanceInMetres(a: Court, b: Court) {
     return EARTH_APPROX_RADIUS_METRES * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine));
 }
 
-//Clusterize courts that have distance less than 80 into 1 marker on the map
+// Group connected courts: each neighbour is within 80 metres of another member,
+// but a chain of neighbours can make the overall cluster wider than 80 metres.
 export function clusterCourts(courts: Court[]): CourtCluster[] {
-    // Set to track courts that was not grouped, deleting from said set after court found its cluster 
+    // Removing a court when discovered assigns each ID to exactly one cluster.
     const unvisited = new Set(courts.map((court) => court.id));
     const byId = new Map(courts.map((court) => [court.id, court]));
     const clusters: CourtCluster[] = [];
@@ -27,6 +28,7 @@ export function clusterCourts(courts: Court[]): CourtCluster[] {
         if (!unvisited.delete(court.id)) continue;
 
         const members = [court];
+        // Newly appended members are visited too, extending the search through neighbours.
         for (let index = 0; index < members.length; index += 1) {
             const current = members[index];
             for (const candidateId of Array.from(unvisited)) {
@@ -39,9 +41,10 @@ export function clusterCourts(courts: Court[]): CourtCluster[] {
         }
 
         clusters.push({
+            // Sorting makes the marker ID independent of the input order for these members.
             id: members.map((member) => member.id).sort().join(','),
             courts: members,
-            // calc marker position by finding middle point of all courts in cluster
+            // Place the marker at the average coordinate of its members.
             latitude: members.reduce((sum, member) => sum + member.latitude, 0) / members.length,
             longitude: members.reduce((sum, member) => sum + member.longitude, 0) / members.length,
         });

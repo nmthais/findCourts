@@ -31,6 +31,8 @@ async function signup(email: string, password: string, username: string) {
     try {
         await saveProfile(user, username);
     } catch (profileError) {
+        // Account creation spans two services with no shared transaction; undo the
+        // Firebase signup if saving the required Supabase profile fails.
         try {
             await deleteUser(user);
         } catch {

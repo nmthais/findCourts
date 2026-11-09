@@ -62,6 +62,7 @@ export default function Map() {
         )
         : undefined;
 
+    // Search can select a court outside the loaded area; keep its marker visible too.
     const displayedClusters =
         selectedCluster && !loadedVersionOfSelectedCluster
             ? [...courtClusters, selectedCluster] : courtClusters; 

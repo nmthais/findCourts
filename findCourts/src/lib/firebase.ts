@@ -1,7 +1,6 @@
 import { getApp, getApps, initializeApp } from "firebase/app";
 import { initializeFirebaseAuth } from './firebaseAuth';
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// Shared Firebase project for client sign-in; backend token verification must use this project ID.
 const firebaseConfig = {
   apiKey: "AIzaSyAh9kN4PkJa0wRJYu-ojz1q6K3aqenY0Yg",
   authDomain: "findcourts-8a30a.firebaseapp.com",
@@ -16,6 +15,7 @@ export const isFirebaseConfigured = Boolean(
   firebaseConfig.apiKey && firebaseConfig.authDomain && firebaseConfig.projectId && firebaseConfig.appId
 );
 
+// Reuse the default app if this module is evaluated again during development.
 export const auth = isFirebaseConfigured
   ? initializeFirebaseAuth(getApps().length ? getApp() : initializeApp(firebaseConfig))
   : null;

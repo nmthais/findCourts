@@ -12,7 +12,7 @@ export function useCourts() {
     const [courtsError, setCourtsError] = useState<string | null>(null);
     const [cacheLoadFinished, setCacheLoadFinished] = useState(false);      // finish reading cache or not
 
-    // everytime dependencies courts changes, automatically call this 
+    // Clustering scans nearby pairs, so reuse the result until the court batch changes.
     const courtClusters = useMemo(
         () => clusterCourts(courts),
         [courts],
@@ -48,6 +48,8 @@ export function useCourts() {
 
         try {
             const result = await getCourts(bounds);
+            // Pending discovery means an empty response is not confirmed empty coverage.
+            // The saved batch may be from another area, but keeps previously loaded courts usable.
             const fallback = result.courts.length === 0 && result.cache.pendingTiles > 0
                 ? await loadCachedCourts()
                 : null;

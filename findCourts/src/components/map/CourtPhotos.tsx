@@ -99,11 +99,13 @@ const CourtPhotos = forwardRef<CourtPhotosHandle, Props>(function CourtPhotos(
       || images.length >= Math.min(totalCount, MAX_VISIBLE_IMAGES)
     ) return;
 
+    // A ref blocks repeated scroll callbacks immediately, before loading state re-renders.
     loadMorePending.current = true;
     setLoadingMore(true);
     try {
       const page = await getCourtImages(courtId, user, PAGE_SIZE, images.length);
       setImages((current) => {
+        // New uploads can shift offset-based pages, so overlapping results must be deduplicated.
         const knownIds = new Set(current.map((image) => image.id));
         return [...current, ...page.images.filter((image) => !knownIds.has(image.id))];
       });
@@ -155,6 +157,7 @@ const CourtPhotos = forwardRef<CourtPhotosHandle, Props>(function CourtPhotos(
     const savedImages: CourtImage[] = [];
     try {
       for (const asset of result.assets) {
+        // Save each upload before starting the next; a later failure preserves earlier successes.
         const signature = await requestUploadSignature(user, courtId);
         const uploaded = await uploadToCloudinary(asset, signature);
         const saved = await saveCourtImage(user, courtId, uploaded.publicId);
