@@ -5,6 +5,7 @@ import {
     EmailAuthProvider,
     onAuthStateChanged,
     reauthenticateWithCredential,
+    sendPasswordResetEmail,
     signInWithEmailAndPassword,
     signOut,
     updatePassword,
@@ -21,6 +22,10 @@ function requireAuth() {
 
 async function login(email: string, password: string) {
     await signInWithEmailAndPassword(requireAuth(), email.trim(), password);
+}
+
+async function resetPassword(email: string) {
+    await sendPasswordResetEmail(requireAuth(), email.trim());
 }
 
 async function signup(email: string, password: string, username: string) {
@@ -62,6 +67,7 @@ type AuthContextValue = {
     loading: boolean;
     isConfigured: boolean;
     login: typeof login;
+    resetPassword: typeof resetPassword;
     signup: typeof signup;
     logout: typeof logout;
     changePassword: typeof changePassword;
@@ -90,6 +96,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
             loading,
             isConfigured: isFirebaseConfigured,
             login,
+            resetPassword,
             signup,
             logout,
             changePassword,

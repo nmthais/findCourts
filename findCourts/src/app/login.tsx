@@ -125,6 +125,15 @@ export default function Login() {
                 onSubmitEditing={handleSubmit}
                 editable={!disabled}
               />
+              <Pressable
+                onPress={() => router.push('/forgot-password')}
+                disabled={submitting}
+                accessibilityRole="button"
+                accessibilityState={{ disabled: submitting }}
+                style={({ pressed }) => [styles.forgotPassword, { opacity: submitting ? 0.6 : pressed ? 0.8 : 1 }]}
+              >
+                <Text style={{ color: colors.primary }}>Forgot password?</Text>
+              </Pressable>
               {(!isConfigured || error) && (
                 <Text accessibilityRole="alert" accessibilityLiveRegion="polite" style={[styles.error, { color: colors.error }]}>
                   {!isConfigured ? 'Login is unavailable right now. Please try again later.' : error}
@@ -203,6 +212,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     marginBottom: 16,
+  },
+  forgotPassword: {
+    minHeight: 48,
+    alignSelf: 'flex-end',
+    justifyContent: 'center',
+    marginTop: -16,
+    marginBottom: 12,
+    paddingHorizontal: 8,
   },
   button: {
     minHeight: 50,
