@@ -330,6 +330,16 @@ export default function Account() {
                             <Ionicons name="time-outline" size={22} color={colors.primary} />
                             <Text style={[styles.buttonText, { color: colors.primary }]}>My contributions</Text>
                         </Pressable>
+                        <Pressable
+                            accessibilityRole="link"
+                            onPress={() => router.push('/attribution')}
+                            disabled={signingOut || savingUsername || savingPassword}
+                            accessibilityState={{ disabled: signingOut || savingUsername || savingPassword }}
+                            style={({ pressed }) => [styles.button, { backgroundColor: pressed ? colors.pressed : colors.surface }]}
+                        >
+                            <Ionicons name="information-circle-outline" size={22} color={colors.primary} />
+                            <Text style={[styles.buttonText, { color: colors.primary }]}>Attributions</Text>
+                        </Pressable>
                         <View style={styles.footer}>
                         <Pressable
                             onPress={handleSignOut}

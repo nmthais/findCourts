@@ -15,6 +15,11 @@ function Attribution() {
       >
         <Text style={styles.link}>Badminton icons created by Handicon - Flaticon</Text>
       </Pressable>
+      <Pressable
+        onPress={() => Linking.openURL('https://www.flaticon.com/free-icons/pickleball')}
+      >
+        <Text style={styles.link}>Pickleball icons created by faizgrafis - Flaticon</Text>
+      </Pressable>
     </View>
   );
 }

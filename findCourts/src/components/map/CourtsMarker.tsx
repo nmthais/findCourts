@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet} from 'react-native';
+import { Image, View, Text, StyleSheet} from 'react-native';
 import { Marker } from 'react-native-maps';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import type { CourtCluster } from '@/type/CourtCluster';
@@ -26,7 +26,15 @@ export default function CourtsMarker({ clusters, markerSize, onSelect }: CourtsM
             // new set of sports for each cluster since courts can be used for many sports
             const isCluster = cluster.courts.length > 1;
             const size = isCluster ? clusterMarkerSize : markerSize;
-            const sports = [...new Set(cluster.courts.map((court) => court.sport))].join(', ');
+            const uniqueSports = [...new Set(cluster.courts.map((court) => court.sport))];
+            const sport = cluster.courts[0]?.sport;
+            const sportImage = sport === 'badminton'
+                ? require('@/assets/icons/shuttlecock.png')
+                : sport === 'pickleball'
+                    ? require('@/assets/icons/pickleball.png')
+                    : null;
+            const iconSize = size * 0.58;
+            const sports = uniqueSports.join(', ');
             const address = cluster.courts.find((court) => court.address)?.address ?? 'Address unavailable';
             const details = [
                 cluster.courts.length > 1 ? `${cluster.courts.length} courts` : undefined,
@@ -37,6 +45,7 @@ export default function CourtsMarker({ clusters, markerSize, onSelect }: CourtsM
             return (
             <Marker
                 key={cluster.id}
+                accessibilityLabel={`${clusterTitle(cluster)}. ${details}`}
                 coordinate={{
                     latitude: cluster.latitude,
                     longitude: cluster.longitude,
@@ -46,7 +55,6 @@ export default function CourtsMarker({ clusters, markerSize, onSelect }: CourtsM
                     onSelect(cluster);
                 }}
             >
-                {/* change this to the main sport of the court instead of number thats chop */}
                 <View style={[styles.marker, isCluster && styles.clusterMarker, 
                     {
                         width: size,
@@ -54,13 +62,22 @@ export default function CourtsMarker({ clusters, markerSize, onSelect }: CourtsM
                         borderRadius: size /2,
                     }]}
                 >
-                    {isCluster ? (
+                    {sportImage ? (
+                        <Image
+                            source={sportImage}
+                            style={{ width: iconSize, height: iconSize }}
+                            resizeMode="contain"
+                            fadeDuration={0}
+                        />
+                    ) : sport === 'tennis' ? (
+                        <Ionicons name="tennisball" size={iconSize} color='#000000' />
+                    ) : isCluster ? (
                         <Text style={[styles.markerText, {fontSize: markerSize * 0.44}]}
                         >
                             {cluster.courts.length}
                         </Text>
                     ) : (
-                        <Ionicons name="tennisball" size={markerSize * 0.58} color={colors.icons} />
+                        <Ionicons name="location" size={iconSize} color={colors.icons} />
                     )}
                 </View>
             </Marker>
@@ -74,12 +91,12 @@ const styles = StyleSheet.create({
     marker: {
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#c233ff',
+        backgroundColor: '#14B8A6',
         borderColor: '#ffffff',
         borderWidth: 2,
     },
     clusterMarker: {
-        backgroundColor: '#be3a85',
+        backgroundColor: '#0D9488',
     },
     markerText: {
         color: '#ffffff',

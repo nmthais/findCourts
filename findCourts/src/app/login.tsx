@@ -158,6 +158,15 @@ export default function Login() {
               >
                 <Text style={{ color: colors.primary }}>New to FindCourts? Create an account</Text>
               </Pressable>
+              <Pressable
+                onPress={() => router.push('/attribution')}
+                disabled={submitting}
+                accessibilityRole="link"
+                accessibilityState={{ disabled: submitting }}
+                style={({ pressed }) => [styles.secondaryButton, { backgroundColor: pressed ? colors.pressed : 'transparent' }]}
+              >
+                <Text style={{ color: colors.secondaryText }}>Attributions</Text>
+              </Pressable>
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
